@@ -11,7 +11,7 @@ function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
-export default function BalanceCards({ data }: BalanceCardsProps) {
+const BalanceCards = ({ data }: BalanceCardsProps) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6">
       {/* Current Balance — dark card */}
@@ -40,3 +40,4 @@ export default function BalanceCards({ data }: BalanceCardsProps) {
     </div>
   );
 }
+export default BalanceCards;

@@ -13,9 +13,9 @@ function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
-export default function RecurringBillsOverview({
+const RecurringBillsOverview = ({
   summary,
-}: RecurringBillsOverviewProps) {
+}: RecurringBillsOverviewProps) => {
   const items = [
     { label: "Paid Bills", amount: summary.paid, borderColor: "#277C78" },
     {
@@ -63,3 +63,5 @@ export default function RecurringBillsOverview({
     </div>
   );
 }
+
+export default RecurringBillsOverview;

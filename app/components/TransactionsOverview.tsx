@@ -23,9 +23,9 @@ function formatDate(dateStr: string): string {
   });
 }
 
-export default function TransactionsOverview({
+const TransactionsOverview = ({
   transactions,
-}: TransactionsOverviewProps) {
+}: TransactionsOverviewProps) => {
   return (
     <div className="bg-white rounded-xl p-6 sm:p-8">
       {/* Header */}
@@ -66,9 +66,8 @@ export default function TransactionsOverview({
             </div>
             <div className="text-right">
               <p
-                className={`text-[14px] font-bold ${
-                  tx.amount >= 0 ? "text-green" : "text-grey-900"
-                }`}
+                className={`text-[14px] font-bold ${tx.amount >= 0 ? "text-green" : "text-grey-900"
+                  }`}
               >
                 {formatCurrency(tx.amount)}
               </p>
@@ -82,3 +81,5 @@ export default function TransactionsOverview({
     </div>
   );
 }
+
+export default TransactionsOverview;

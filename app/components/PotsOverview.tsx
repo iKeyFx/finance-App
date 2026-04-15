@@ -13,7 +13,7 @@ function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
-export default function PotsOverview({ pots }: PotsOverviewProps) {
+const PotsOverview = ({ pots }: PotsOverviewProps) => {
   const totalSaved = pots.reduce((acc, pot) => acc + pot.total, 0);
 
   return (
@@ -74,3 +74,4 @@ export default function PotsOverview({ pots }: PotsOverviewProps) {
     </div>
   );
 }
+export default PotsOverview;

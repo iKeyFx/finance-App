@@ -31,7 +31,7 @@ const navItems: NavItem[] = [
   },
 ];
 
-export default function Sidebar({ minimized, setMinimized }: SidebarProps) {
+const Sidebar = ({ minimized, setMinimized }: SidebarProps) => {
   const pathname = usePathname();
 
   return (
@@ -170,3 +170,5 @@ export default function Sidebar({ minimized, setMinimized }: SidebarProps) {
     </>
   );
 }
+
+export default Sidebar;

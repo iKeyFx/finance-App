@@ -28,7 +28,7 @@ function formatCurrency(amount: number): string {
   }).format(amount)
 }
 
-export default function BudgetsOverview({ budgets }: BudgetsOverviewProps) {
+const BudgetsOverview = ({ budgets }: BudgetsOverviewProps) => {
   const totalMaximum = budgets.reduce((acc, b) => acc + b.maximum, 0)
   const totalSpent = budgets.reduce((acc, b) => acc + b.spent, 0)
 
@@ -146,3 +146,5 @@ export default function BudgetsOverview({ budgets }: BudgetsOverviewProps) {
     </Card>
   )
 }
+
+export default BudgetsOverview
