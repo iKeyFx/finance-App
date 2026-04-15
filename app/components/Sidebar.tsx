@@ -71,7 +71,7 @@ export default function Sidebar({ minimized, setMinimized }: SidebarProps) {
                     href={item.href}
                     className={`group flex items-center gap-4 py-4 border-l-4 transition-all duration-200 ${minimized ? "px-5 justify-center" : "px-8"
                       } ${isActive
-                        ? "bg-beige-100 border-l-green text-grey-900 rounded-r-xl"
+                        ? "bg-beige-100 border-l-green text-grey-900 rounded-r-xl mr-3"
                         : "border-l-transparent text-grey-300 hover:text-white"
                       }`}
                   >

@@ -13,7 +13,6 @@ import {
 
 export default function OverviewPage() {
     return (
-        // <div className="px-4 sm:px-8 lg:px-10 py-6 sm:py-8 lg:py-8 max-w-[1200px]">
         <div className="px-4 sm:px-8 lg:px-10 py-6 sm:py-8 lg:py-8">
             {/* Page Title */}
             <h1 className="text-[32px] font-bold text-grey-900 mb-8">Overview</h1>
