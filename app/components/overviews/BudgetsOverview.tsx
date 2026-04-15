@@ -15,24 +15,18 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart"
-import type { BudgetData } from "@/app/data/financeData"
+import { Budget } from "@/app/data/types"
+import { formatCurrency } from "@/lib/formatCurrencyNoSign"
 
 interface BudgetsOverviewProps {
-  budgets: BudgetData[]
+  budgets: Budget[]
 }
 
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(amount)
-}
 
 const BudgetsOverview = ({ budgets }: BudgetsOverviewProps) => {
   const totalMaximum = budgets.reduce((acc, b) => acc + b.maximum, 0)
   const totalSpent = budgets.reduce((acc, b) => acc + b.spent, 0)
 
-  // Build chart data and config from budgets
   const chartData = budgets.map((budget) => ({
     category: budget.category,
     spent: budget.spent,
@@ -50,7 +44,7 @@ const BudgetsOverview = ({ budgets }: BudgetsOverviewProps) => {
   } satisfies ChartConfig
 
   return (
-    <Card className="bg-white rounded-xl">
+    <Card className="bg-white rounded-xl ">
       {/* Header */}
       <CardHeader className="flex flex-row items-center justify-between pb-5 pt-6 px-6 sm:px-8">
         <CardTitle className="text-[20px] font-bold text-grey-900">
@@ -71,7 +65,7 @@ const BudgetsOverview = ({ budgets }: BudgetsOverviewProps) => {
       </CardHeader>
 
       {/* Content */}
-      <CardContent className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8 px-6 sm:px-8 pb-6 sm:pb-8">
+      <CardContent className="grid sm:grid-cols-[2fr_auto] lg:grid-cols-[1fr_1fr] place-items-center gap-6 sm:gap-8 lg:gap-4 px-6 sm:px-4 pb-4">
         {/* Donut Chart */}
         <ChartContainer
           config={chartConfig}
@@ -126,7 +120,7 @@ const BudgetsOverview = ({ budgets }: BudgetsOverviewProps) => {
         </ChartContainer>
 
         {/* Legend */}
-        <div className="flex flex-col gap-4 w-full">
+        <div className="grid grid-cols-2 sm:grid-cols-1 gap-4 w-full">
           {budgets.map((budget) => (
             <div key={budget.category} className="flex items-center gap-4">
               <div

@@ -1,17 +1,12 @@
+import { Pot } from "@/app/data/types";
 import Image from "next/image";
 import Link from "next/link";
-import type { PotData } from "@/app/data/financeData";
+import { formatCurrency } from "@/lib/formatCurrencyNoSign";
 
 interface PotsOverviewProps {
-  pots: PotData[];
+  pots: Pot[];
 }
 
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(amount);
-}
 
 const PotsOverview = ({ pots }: PotsOverviewProps) => {
   const totalSaved = pots.reduce((acc, pot) => acc + pot.total, 0);
