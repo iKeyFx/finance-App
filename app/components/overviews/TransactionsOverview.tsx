@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { TransactionData } from "@/app/data/financeData";
+import { TransactionData } from "@/app/data/types";
 
 interface TransactionsOverviewProps {
   transactions: TransactionData[];

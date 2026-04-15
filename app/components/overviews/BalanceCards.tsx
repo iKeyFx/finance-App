@@ -1,20 +1,16 @@
-import type { BalanceData } from "@/app/data/financeData";
+import { Balance } from "@/app/data/types";
+import { formatCurrency } from "@/lib/formatCurrencyNoSign";
+
 
 interface BalanceCardsProps {
-  data: BalanceData;
+  data: Balance;
 }
 
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(amount);
-}
 
 const BalanceCards = ({ data }: BalanceCardsProps) => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6">
-      {/* Current Balance — dark card */}
+      {/* Current Balance */}
       <div className="bg-grey-900 text-white rounded-xl p-5 sm:p-6">
         <p className="text-[14px] text-white/80">Current Balance</p>
         <p className="text-[32px] font-bold mt-3 leading-tight">

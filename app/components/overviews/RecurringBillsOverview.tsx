@@ -1,17 +1,13 @@
+import { RecurringBillsSummary } from "@/app/data/types";
 import Image from "next/image";
 import Link from "next/link";
-import type { RecurringBillsSummary } from "@/app/data/financeData";
+import { formatCurrency } from "@/lib/formatCurrencyNoSign";
 
 interface RecurringBillsOverviewProps {
   summary: RecurringBillsSummary;
 }
 
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(amount);
-}
+
 
 const RecurringBillsOverview = ({
   summary,
