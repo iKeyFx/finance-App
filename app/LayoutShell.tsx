@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Sidebar from "@/app/components/Sidebar";
 
-const LayoutShell = ({ children }: { children: React.ReactNode }) => {
+export default function LayoutShell({ children }: { children: React.ReactNode }) {
     const [minimized, setMinimized] = useState(false);
 
     return (
@@ -18,4 +18,3 @@ const LayoutShell = ({ children }: { children: React.ReactNode }) => {
         </>
     );
 }
-export default LayoutShell

@@ -73,3 +73,5 @@ export const TRANSACTION_CATEGORIES = [
 ] as const;
 
 export type TransactionCategory = (typeof TRANSACTION_CATEGORIES)[number];
+
+export type BudgetWithTransactions = Budget & { latestSpending: Transaction[] };
