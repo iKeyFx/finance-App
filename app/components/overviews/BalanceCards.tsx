@@ -7,7 +7,7 @@ interface BalanceCardsProps {
 }
 
 
-const BalanceCards = ({ data }: BalanceCardsProps) => {
+export default function BalanceCards({ data }: BalanceCardsProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6">
       {/* Current Balance */}
@@ -36,4 +36,3 @@ const BalanceCards = ({ data }: BalanceCardsProps) => {
     </div>
   );
 }
-export default BalanceCards;

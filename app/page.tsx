@@ -29,7 +29,7 @@ const transactions: Transaction[] = rawData.transactions.slice(0, 5);
 const budgets: Budget[] = rawData.budgets.slice(0, 4);
 const recurringBillsSummary: RecurringBillsSummary = rawData.recurringBillsSummary;
 
-const OverviewPage = () => {
+export default function OverviewPage() {
     return (
         <>
             {/* Page Title */}
@@ -54,6 +54,4 @@ const OverviewPage = () => {
             </div>
         </>
     );
-};
-
-export default OverviewPage;
+}

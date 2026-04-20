@@ -46,11 +46,11 @@ export const metadata: Metadata = {
   },
 };
 
-const RootLayout = ({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) => {
+}>) {
   return (
     <html lang="en" className={publicSans.variable}>
       <body className="min-h-screen">
@@ -59,4 +59,3 @@ const RootLayout = ({
     </html>
   );
 }
-export default RootLayout;

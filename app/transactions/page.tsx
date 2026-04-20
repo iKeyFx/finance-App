@@ -15,7 +15,7 @@ import type { Transaction } from "@/app/data/types";
 
 const transactions: Transaction[] = rawData.transactions;
 
-const TransactionsPage = () => {
+export default function TransactionsPage() {
     return (
         <>
             {/* Page Title */}
@@ -25,6 +25,4 @@ const TransactionsPage = () => {
             <TransactionsTable transactions={transactions} />
         </>
     );
-};
-
-export default TransactionsPage;
+}
