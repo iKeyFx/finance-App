@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Overview",
+  description: "Your financial overview — current balance, recent transactions, budgets, pots, and recurring bills at a glance.",
+  openGraph: {
+    title: "Overview | Finance App",
+    description: "Your financial overview — current balance, recent transactions, budgets, pots, and recurring bills at a glance.",
+  },
+};
+
 import BalanceCards from "@/app/components/overviews/BalanceCards";
 import PotsOverview from "@/app/components/overviews/PotsOverview";
 import TransactionsOverview from "@/app/components/overviews/TransactionsOverview";

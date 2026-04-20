@@ -19,8 +19,28 @@ const publicSans = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Finance App | Overview",
-  description: "Personal Finance Management Dashboard",
+  title: {
+    template: "%s | Finance App",
+    default: "Finance App",
+  },
+  description: "Track your balance, budgets, transactions, and savings all in one place.",
+  keywords: ["personal finance", "budget tracker", "expense tracker", "savings", "transactions"],
+  authors: [{ name: "Finance App" }],
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    type: "website",
+    siteName: "Finance App",
+    title: "Finance App",
+    description: "Track your balance, budgets, transactions, and savings all in one place.",
+  },
+  twitter: {
+    card: "summary",
+    title: "Finance App",
+    description: "Track your balance, budgets, transactions, and savings all in one place.",
+  },
   icons: {
     icon: "/images/favicon-32x32.png",
   },
