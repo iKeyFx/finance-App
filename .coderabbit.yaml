@@ -1,0 +1,24 @@
+language: en-US
+reviews:
+  auto_review:
+    enabled: true
+    drafts: false
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  path_filters:
+    - "!**/*.lock"
+    - "!**/node_modules/**"
+  path_instructions:
+    - path: "app/**"
+      instructions: "This is a Next.js app. Check for proper use of server vs client components, correct data fetching patterns, and Tailwind CSS consistency."
+    - path: "app/(auth)/**"
+      instructions: "Auth pages — verify no sensitive data is exposed client-side and form validation is in place."
+    - path: "app/actions/**"
+      instructions: "Server actions — check for proper input validation and error handling."
+    - path: "app/api/**"
+      instructions: "API routes — ensure proper error responses and no secrets leaked in responses."
+chat:
+  auto_reply: true

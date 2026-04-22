@@ -24,6 +24,7 @@ export default function BudgetsClient({ initialBudgets, allTransactions }: Budge
   const router = useRouter()
   const [budgets, setBudgets] = useState<Budget[]>(initialBudgets)
   const [modal, setModal] = useState<ModalState>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const budgetsWithSpending = useMemo<BudgetWithTransactions[]>(
     () =>
@@ -43,32 +44,56 @@ export default function BudgetsClient({ initialBudgets, allTransactions }: Budge
   )
 
   const handleAdd = async (newBudget: Budget) => {
-    setBudgets((prev) => [...prev, newBudget])
+    const prev = budgets
+    setBudgets((b) => [...b, newBudget])
     setModal(null)
-    await addBudget(newBudget)
-    router.refresh()
+    try {
+      await addBudget(newBudget)
+      router.refresh()
+    } catch (e) {
+      setBudgets(prev)
+      setError(e instanceof Error ? e.message : "Failed to add budget")
+    }
   }
 
   const handleEdit = async (updated: Budget) => {
     if (modal?.type !== "edit") return
     const originalCategory = modal.budget.category
-    setBudgets((prev) => prev.map((b) => (b.category === originalCategory ? updated : b)))
+    const prev = budgets
+    setBudgets((b) => b.map((budget) => (budget.category === originalCategory ? updated : budget)))
     setModal(null)
-    await updateBudget(originalCategory, updated)
-    router.refresh()
+    try {
+      await updateBudget(originalCategory, updated)
+      router.refresh()
+    } catch (e) {
+      setBudgets(prev)
+      setError(e instanceof Error ? e.message : "Failed to update budget")
+    }
   }
 
   const handleDelete = async () => {
     if (modal?.type !== "delete") return
     const category = modal.budget.category
-    setBudgets((prev) => prev.filter((b) => b.category !== category))
+    const prev = budgets
+    setBudgets((b) => b.filter((budget) => budget.category !== category))
     setModal(null)
-    await deleteBudget(category)
-    router.refresh()
+    try {
+      await deleteBudget(category)
+      router.refresh()
+    } catch (e) {
+      setBudgets(prev)
+      setError(e instanceof Error ? e.message : "Failed to delete budget")
+    }
   }
 
   return (
     <>
+      {error && (
+        <div className="mb-4 px-4 py-3 bg-red/10 border border-red rounded-lg text-[14px] text-red flex items-center justify-between">
+          <span>{error}</span>
+          <button type="button" onClick={() => setError(null)} className="ml-4 text-red hover:opacity-70 cursor-pointer">✕</button>
+        </div>
+      )}
       {/* Header row */}
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-[32px] font-bold text-grey-900">Budgets</h1>

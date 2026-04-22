@@ -13,6 +13,7 @@ export default function SignUpForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
+  const [message, setMessage] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
@@ -21,7 +22,7 @@ export default function SignUpForm() {
     setLoading(true)
 
     const supabase = createClient()
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { data: { name } },
@@ -33,7 +34,12 @@ export default function SignUpForm() {
       return
     }
 
-    router.push("/overview")
+    if (data.session) {
+      router.push("/overview")
+    } else {
+      setMessage("Account created! Check your email to confirm before logging in.")
+      setLoading(false)
+    }
   }
 
   return (
@@ -96,9 +102,8 @@ export default function SignUpForm() {
           </p>
         </div>
 
-        {error && (
-          <p className="text-[13px] text-red-500">{error}</p>
-        )}
+        {error && <p className="text-[13px] text-red-500">{error}</p>}
+        {message && <p className="text-[13px] text-green-600">{message}</p>}
 
         <button
           type="submit"
