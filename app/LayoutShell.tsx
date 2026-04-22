@@ -1,10 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import Sidebar from "@/app/components/Sidebar";
 
+const AUTH_PATHS = ["/login", "/sign-up"]
+
 export default function LayoutShell({ children }: { children: React.ReactNode }) {
+    const pathname = usePathname();
     const [minimized, setMinimized] = useState(false);
+
+    if (AUTH_PATHS.includes(pathname)) return <>{children}</>
 
     return (
         <>
