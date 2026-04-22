@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
 
 interface NavItem {
   label: string;
@@ -16,7 +17,7 @@ interface SidebarProps {
 }
 
 const navItems: NavItem[] = [
-  { label: "Overview", href: "/", icon: "/images/icon-nav-overview.svg" },
+  { label: "Overview", href: "/overview", icon: "/images/icon-nav-overview.svg" },
   {
     label: "Transactions",
     href: "/transactions",
@@ -33,6 +34,13 @@ const navItems: NavItem[] = [
 
 const Sidebar = ({ minimized, setMinimized }: SidebarProps) => {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
 
   return (
     <>
@@ -108,6 +116,21 @@ const Sidebar = ({ minimized, setMinimized }: SidebarProps) => {
           </ul>
         </nav>
 
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-4 px-8 py-4 text-grey-300 hover:text-white transition-colors duration-200 cursor-pointer"
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
+            <path d="M7.5 17.5H4.167A1.667 1.667 0 0 1 2.5 15.833V4.167A1.667 1.667 0 0 1 4.167 2.5H7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M13.333 14.167 17.5 10l-4.167-4.167" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M17.5 10H7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          {!minimized && (
+            <span className="text-[14px] font-normal">Log Out</span>
+          )}
+        </button>
+
         {/* Minimize Button */}
         <button
           onClick={() => setMinimized(!minimized)}
@@ -165,6 +188,19 @@ const Sidebar = ({ minimized, setMinimized }: SidebarProps) => {
               </li>
             );
           })}
+          <li>
+            <button
+              onClick={handleLogout}
+              className="flex flex-col items-center gap-1 px-3 py-2 text-grey-300 transition-colors duration-200 cursor-pointer"
+            >
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7.5 17.5H4.167A1.667 1.667 0 0 1 2.5 15.833V4.167A1.667 1.667 0 0 1 4.167 2.5H7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M13.333 14.167 17.5 10l-4.167-4.167" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M17.5 10H7.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span className="text-[10px] font-bold hidden sm:block">Log Out</span>
+            </button>
+          </li>
         </ul>
       </nav>
     </>

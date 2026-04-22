@@ -1,11 +1,13 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import { useRouter } from "next/navigation"
 import type { Budget, Transaction, BudgetWithTransactions } from "@/app/data/types"
 import BudgetDonutChart from "./BudgetDonutChart"
 import BudgetCard from "./BudgetCard"
 import AddEditBudgetModal from "./AddEditBudgetModal"
 import DeleteBudgetModal from "./DeleteBudgetModal"
+import { addBudget, updateBudget, deleteBudget } from "@/app/actions/budgets"
 
 interface BudgetsClientProps {
   initialBudgets: Budget[]
@@ -19,37 +21,50 @@ type ModalState =
   | null
 
 export default function BudgetsClient({ initialBudgets, allTransactions }: BudgetsClientProps) {
+  const router = useRouter()
   const [budgets, setBudgets] = useState<Budget[]>(initialBudgets)
   const [modal, setModal] = useState<ModalState>(null)
 
   const budgetsWithSpending = useMemo<BudgetWithTransactions[]>(
     () =>
-      budgets.map((budget) => ({
-        ...budget,
-        latestSpending: allTransactions
-          .filter((tx) => tx.category === budget.category && tx.amount < 0)
-          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-          .slice(0, 3),
-      })),
+      budgets.map((budget) => {
+        const matching = allTransactions.filter(
+          (tx) => tx.category === budget.category && tx.amount < 0
+        )
+        return {
+          ...budget,
+          spent: matching.reduce((sum, tx) => sum + Math.abs(tx.amount), 0),
+          latestSpending: [...matching]
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+            .slice(0, 3),
+        }
+      }),
     [budgets, allTransactions]
   )
 
-  const handleAdd = (newBudget: Budget) => {
+  const handleAdd = async (newBudget: Budget) => {
     setBudgets((prev) => [...prev, newBudget])
     setModal(null)
+    await addBudget(newBudget)
+    router.refresh()
   }
 
-  const handleEdit = (updated: Budget) => {
+  const handleEdit = async (updated: Budget) => {
     if (modal?.type !== "edit") return
     const originalCategory = modal.budget.category
     setBudgets((prev) => prev.map((b) => (b.category === originalCategory ? updated : b)))
     setModal(null)
+    await updateBudget(originalCategory, updated)
+    router.refresh()
   }
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (modal?.type !== "delete") return
-    setBudgets((prev) => prev.filter((b) => b.category !== modal.budget.category))
+    const category = modal.budget.category
+    setBudgets((prev) => prev.filter((b) => b.category !== category))
     setModal(null)
+    await deleteBudget(category)
+    router.refresh()
   }
 
   return (

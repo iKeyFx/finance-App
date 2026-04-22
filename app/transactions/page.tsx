@@ -1,4 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata } from "next"
+import TransactionsTable from "@/app/components/transactions/TransactionsTable"
+import { createClient } from "@/utils/supabase/server"
+import type { Transaction } from "@/app/data/types"
 
 export const metadata: Metadata = {
   title: "Transactions",
@@ -7,22 +10,24 @@ export const metadata: Metadata = {
     title: "Transactions | Finance App",
     description: "Browse and search your full transaction history, sorted and filtered by date, category, or amount.",
   },
-};
+}
 
-import TransactionsTable from "@/app/components/transactions/TransactionsTable";
-import rawData from "@/app/data/data.json";
-import type { Transaction } from "@/app/data/types";
+export default async function TransactionsPage() {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from("transactions")
+    .select("avatar, name, category, date, amount, recurring")
+    .order("date", { ascending: false })
 
-const transactions: Transaction[] = rawData.transactions;
+  const transactions: Transaction[] = (data ?? []).map((tx) => ({
+    ...tx,
+    recurring: tx.recurring ?? false,
+  }))
 
-export default function TransactionsPage() {
-    return (
-        <>
-            {/* Page Title */}
-            <h1 className="text-[32px] font-bold text-grey-900 mb-8">Transactions</h1>
-
-            {/* Transactions Table */}
-            <TransactionsTable transactions={transactions} />
-        </>
-    );
+  return (
+    <>
+      <h1 className="text-[32px] font-bold text-grey-900 mb-8">Transactions</h1>
+      <TransactionsTable transactions={transactions} />
+    </>
+  )
 }
