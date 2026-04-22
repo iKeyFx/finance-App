@@ -121,7 +121,7 @@ const BudgetsOverview = ({ budgets }: BudgetsOverviewProps) => {
 
         {/* Legend */}
         <div className="grid grid-cols-2 sm:grid-cols-1 gap-4 w-full">
-          {budgets.map((budget) => (
+          {budgets?.slice(0, 4).map((budget) => (
             <div key={budget.category} className="flex items-center gap-4">
               <div
                 className="w-1 h-[43px] rounded-full shrink-0"

@@ -50,7 +50,7 @@ const PotsOverview = ({ pots }: PotsOverviewProps) => {
 
         {/* Individual Pots */}
         <div className="grid grid-cols-2 gap-4 flex-1">
-          {pots.map((pot) => (
+          {pots.slice(0, 4).map((pot) => (
             <div key={pot.name} className="flex items-center gap-4">
               <div
                 className="w-1 h-full min-h-[43px] rounded-full"

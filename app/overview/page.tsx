@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { redirect } from "next/navigation"
 import BalanceCards from "@/app/components/overviews/BalanceCards"
 import PotsOverview from "@/app/components/overviews/PotsOverview"
 import TransactionsOverview from "@/app/components/overviews/TransactionsOverview"
@@ -18,6 +19,8 @@ export const metadata: Metadata = {
 
 export default async function OverviewPage() {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect("/login")
 
   const [
     { data: balanceData },
@@ -26,11 +29,11 @@ export default async function OverviewPage() {
     { data: budgetsData },
     { data: allNegativeTx },
   ] = await Promise.all([
-    supabase.from("balances").select("current, income, expenses, recurring_paid, recurring_upcoming, recurring_due_soon").single(),
-    supabase.from("pots").select("name, target, total, theme").limit(4),
-    supabase.from("transactions").select("avatar, name, category, date, amount, recurring").order("date", { ascending: false }).limit(5),
-    supabase.from("budgets").select("category, maximum, theme").limit(4),
-    supabase.from("transactions").select("category, amount").lt("amount", 0),
+    supabase.from("balances").select("current, income, expenses, recurring_paid, recurring_upcoming, recurring_due_soon").eq("user_id", user.id).single(),
+    supabase.from("pots").select("name, target, total, theme").eq("user_id", user.id),
+    supabase.from("transactions").select("avatar, name, category, date, amount, recurring").eq("user_id", user.id).order("date", { ascending: false }).limit(5),
+    supabase.from("budgets").select("category, maximum, theme").eq("user_id", user.id),
+    supabase.from("transactions").select("category, amount").eq("user_id", user.id).lt("amount", 0),
   ])
 
   const balance: Balance = balanceData ?? { current: 0, income: 0, expenses: 0 }
