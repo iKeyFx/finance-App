@@ -21,15 +21,21 @@ export interface RecurringBill {
 
 export default async function RecurringBillsPage() {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError) throw new Error(authError.message)
   if (!user) redirect("/login")
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("transactions")
     .select("avatar, name, amount, date")
     .eq("user_id", user.id)
     .eq("recurring", true)
     .order("date", { ascending: false })
+
+  if (error) {
+    console.error("RecurringBillsPage:", error.message)
+    throw new Error("Failed to load recurring bills")
+  }
 
   // Deduplicate by name — keep the most recent occurrence
   const seen = new Set<string>()
