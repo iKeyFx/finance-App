@@ -1,6 +1,5 @@
 import type { Metadata } from "next"
-import { redirect } from "next/navigation"
-import { createClient } from "@/utils/supabase/server"
+import { requireUser } from "@/utils/supabase/helpers"
 import type { Budget, Transaction } from "@/app/data/types"
 import BudgetsClient from "@/app/components/budgets/BudgetsClient"
 
@@ -14,9 +13,7 @@ export const metadata: Metadata = {
 }
 
 export default async function BudgetsPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect("/login")
+  const { user, supabase } = await requireUser()
 
   const [{ data: budgetsData }, { data: transactionsData }] = await Promise.all([
     supabase.from("budgets").select("category, maximum, theme").eq("user_id", user.id),

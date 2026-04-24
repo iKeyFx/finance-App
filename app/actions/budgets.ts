@@ -1,6 +1,6 @@
 "use server"
 
-import { createClient } from "@/utils/supabase/server"
+import { requireUserForAction } from "@/utils/supabase/helpers"
 import type { Budget } from "@/app/data/types"
 
 function validateBudget(budget: Omit<Budget, "spent">) {
@@ -14,9 +14,7 @@ function validateBudget(budget: Omit<Budget, "spent">) {
 
 export async function addBudget(budget: Omit<Budget, "spent">) {
   validateBudget(budget)
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error("Not authenticated")
+  const { user, supabase } = await requireUserForAction()
 
   const { error } = await supabase.from("budgets").insert({
     user_id: user.id,
@@ -30,9 +28,7 @@ export async function addBudget(budget: Omit<Budget, "spent">) {
 export async function updateBudget(originalCategory: string, budget: Omit<Budget, "spent">) {
   if (!originalCategory || typeof originalCategory !== "string") throw new Error("Invalid category")
   validateBudget(budget)
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error("Not authenticated")
+  const { user, supabase } = await requireUserForAction()
 
   const { error } = await supabase
     .from("budgets")
@@ -44,9 +40,7 @@ export async function updateBudget(originalCategory: string, budget: Omit<Budget
 
 export async function deleteBudget(category: string) {
   if (!category || typeof category !== "string") throw new Error("Invalid category")
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error("Not authenticated")
+  const { user, supabase } = await requireUserForAction()
 
   const { error } = await supabase
     .from("budgets")

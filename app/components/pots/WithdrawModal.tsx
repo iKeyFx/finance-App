@@ -1,8 +1,10 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import type { Pot } from "@/app/data/types"
-import { formatCurrency } from "@/lib/formatCurrencyNoSign"
+import Modal from "@/app/components/ui/Modal"
+import CurrencyInput from "@/app/components/ui/CurrencyInput"
+import { formatCurrencyNoSign } from "@/lib/formatter"
 
 interface WithdrawModalProps {
   pot: Pot
@@ -13,12 +15,6 @@ interface WithdrawModalProps {
 export default function WithdrawModal({ pot, onConfirm, onClose }: WithdrawModalProps) {
   const [amount, setAmount] = useState("")
 
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => { if (e.key === "Escape") onClose() }
-    document.addEventListener("keydown", handleEsc)
-    return () => document.removeEventListener("keydown", handleEsc)
-  }, [onClose])
-
   const parsed = parseFloat(amount)
   const newTotal = isNaN(parsed) || parsed <= 0 ? pot.total : Math.max(pot.total - parsed, 0)
   const newPct = Math.min((newTotal / pot.target) * 100, 100)
@@ -27,84 +23,52 @@ export default function WithdrawModal({ pot, onConfirm, onClose }: WithdrawModal
 
   const isValid = !isNaN(parsed) && parsed > 0 && parsed <= pot.total
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!isValid) return
     onConfirm(parsed)
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-xl w-full max-w-[560px] p-8 relative" onClick={(e) => e.stopPropagation()}>
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-6 right-6 w-8 h-8 rounded-full border border-beige-500 flex items-center justify-center text-grey-500 hover:text-grey-900 hover:border-grey-900 transition-colors cursor-pointer text-[14px]"
-          aria-label="Close"
-        >
-          ✕
-        </button>
+    <Modal onClose={onClose}>
+      <h2 className="text-[32px] font-bold text-grey-900 mb-2">Withdraw from &lsquo;{pot.name}&rsquo;</h2>
+      <p className="text-[14px] text-grey-500 mb-6">Withdraw from your pot when you need the funds.</p>
 
-        <h2 className="text-[32px] font-bold text-grey-900 mb-2">Withdraw from &lsquo;{pot.name}&rsquo;</h2>
-        <p className="text-[14px] text-grey-500 mb-6">
-          Withdraw from your pot when you need the funds.
-        </p>
-
-        {/* Progress preview */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-[14px] text-grey-500">New Amount</span>
-            <span className="text-[32px] font-bold text-grey-900">{formatCurrency(newTotal)}</span>
-          </div>
-          <div className="w-full h-2 bg-beige-100 rounded-full overflow-hidden mb-2">
-            <div className="h-full flex rounded-full overflow-hidden">
-              <div
-                className="h-full rounded-l-full transition-all duration-300"
-                style={{ width: `${newPct}%`, backgroundColor: pot.theme }}
-              />
-              <div
-                className="h-full bg-red transition-all duration-300"
-                style={{ width: `${removedPct}%` }}
-              />
-            </div>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-[12px] font-bold text-grey-900">{newPct.toFixed(1)}%</span>
-            <span className="text-[12px] text-grey-500">Target of {formatCurrency(pot.target)}</span>
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-[14px] text-grey-500">New Amount</span>
+          <span className="text-[32px] font-bold text-grey-900">{formatCurrencyNoSign(newTotal)}</span>
+        </div>
+        <div className="w-full h-2 bg-beige-100 rounded-full overflow-hidden mb-2">
+          <div className="h-full flex rounded-full overflow-hidden">
+            <div className="h-full rounded-l-full transition-all duration-300" style={{ width: `${newPct}%`, backgroundColor: pot.theme }} />
+            <div className="h-full bg-red transition-all duration-300" style={{ width: `${removedPct}%` }} />
           </div>
         </div>
-
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div>
-            <label className="text-[14px] font-bold text-grey-900 mb-2 block">Amount to Withdraw</label>
-            <div className="relative flex items-center">
-              <span className="absolute left-4 text-[14px] text-beige-500 pointer-events-none">$</span>
-              <input
-                type="number"
-                min="0.01"
-                step="0.01"
-                placeholder="e.g. 50"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="w-full h-[45px] pl-8 pr-4 rounded-lg border border-beige-500 text-[14px] text-grey-900 placeholder:text-beige-500 outline-none focus:border-grey-900 transition-colors"
-              />
-            </div>
-            {!isNaN(parsed) && parsed > 0 && parsed > pot.total && (
-              <p className="text-[12px] text-red mt-1">
-                Amount exceeds current total of {formatCurrency(pot.total)}
-              </p>
-            )}
-          </div>
-
-          <button
-            type="submit"
-            disabled={!isValid}
-            className="w-full h-[53px] bg-grey-900 text-white text-[14px] font-bold rounded-lg hover:bg-grey-500 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Confirm Withdrawal
-          </button>
-        </form>
+        <div className="flex items-center justify-between">
+          <span className="text-[12px] font-bold text-grey-900">{newPct.toFixed(1)}%</span>
+          <span className="text-[12px] text-grey-500">Target of {formatCurrencyNoSign(pot.target)}</span>
+        </div>
       </div>
-    </div>
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div>
+          <label className="text-[14px] font-bold text-grey-900 mb-2 block">Amount to Withdraw</label>
+          <CurrencyInput value={amount} onChange={setAmount} placeholder="e.g. 50" />
+          {!isNaN(parsed) && parsed > 0 && parsed > pot.total && (
+            <p className="text-[12px] text-red mt-1">
+              Amount exceeds current total of {formatCurrencyNoSign(pot.total)}
+            </p>
+          )}
+        </div>
+        <button
+          type="submit"
+          disabled={!isValid}
+          className="w-full h-[53px] bg-grey-900 text-white text-[14px] font-bold rounded-lg hover:bg-grey-500 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Confirm Withdrawal
+        </button>
+      </form>
+    </Modal>
   )
 }

@@ -16,7 +16,7 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart"
 import { Budget } from "@/app/data/types"
-import { formatCurrency } from "@/lib/formatCurrencyNoSign"
+import { formatCurrencyNoSign as formatCurrency } from "@/lib/formatter"
 
 interface BudgetsOverviewProps {
   budgets: Budget[]

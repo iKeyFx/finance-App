@@ -3,15 +3,9 @@
 import { useState, useMemo } from "react"
 import Image from "next/image"
 import type { RecurringBill } from "@/app/recurring-bills/page"
-import { formatCurrency } from "@/lib/formatCurrencyNoSign"
+import { formatCurrencyNoSign, formatOrdinal } from "@/lib/formatter"
 import { SORT_OPTIONS } from "@/lib/constants"
 import type { SortOption } from "@/app/data/types"
-
-function ordinal(n: number): string {
-  const s = ["th", "st", "nd", "rd"]
-  const v = n % 100
-  return n + (s[(v - 20) % 10] || s[v] || s[0])
-}
 
 function getBillStatus(day: number, today: number): "paid" | "dueSoon" | "upcoming" {
   if (day <= today) return "paid"
@@ -74,7 +68,7 @@ export default function RecurringBillsClient({ bills }: { bills: RecurringBill[]
             <Image src="/images/icon-recurring-bills.svg" alt="" width={40} height={40} />
             <div>
               <p className="text-[14px] text-white/70 mb-2">Total Bills</p>
-              <p className="text-[32px] font-bold text-white">{formatCurrency(totalBills)}</p>
+              <p className="text-[32px] font-bold text-white">{formatCurrencyNoSign(totalBills)}</p>
             </div>
           </div>
 
@@ -85,19 +79,19 @@ export default function RecurringBillsClient({ bills }: { bills: RecurringBill[]
               <div className="flex items-center justify-between py-4">
                 <span className="text-[13px] text-grey-500">Paid Bills</span>
                 <span className="text-[13px] font-bold text-grey-900">
-                  {paidCount} ({formatCurrency(paidTotal)})
+                  {paidCount} ({formatCurrencyNoSign(paidTotal)})
                 </span>
               </div>
               <div className="flex items-center justify-between py-4">
                 <span className="text-[13px] text-grey-500">Total Upcoming</span>
                 <span className="text-[13px] font-bold text-grey-900">
-                  {upcomingCount} ({formatCurrency(upcomingTotal)})
+                  {upcomingCount} ({formatCurrencyNoSign(upcomingTotal)})
                 </span>
               </div>
               <div className="flex items-center justify-between py-4">
                 <span className="text-[13px] text-red">Due Soon</span>
                 <span className="text-[13px] font-bold text-red">
-                  {dueSoonCount} ({formatCurrency(dueSoonTotal)})
+                  {dueSoonCount} ({formatCurrencyNoSign(dueSoonTotal)})
                 </span>
               </div>
             </div>
@@ -179,23 +173,49 @@ export default function RecurringBillsClient({ bills }: { bills: RecurringBill[]
               {filtered.map((bill) => {
                 const status = getBillStatus(bill.day, today)
                 return (
-                  <li key={bill.name} className="grid grid-cols-[1fr_auto_auto] gap-4 items-center py-4">
-                    {/* Bill Title */}
-                    <div className="flex items-center gap-4 min-w-0">
-                      <Image
-                        src={bill.avatar}
-                        alt={bill.name}
-                        width={40}
-                        height={40}
-                        className="rounded-full shrink-0"
-                      />
-                      <span className="text-[14px] font-bold text-grey-900 truncate">{bill.name}</span>
+                  <li key={bill.name} className="grid grid-cols-[40px_1fr_auto] sm:grid-cols-[1fr_auto_auto] gap-x-4 items-center py-4">
+                    {/* Avatar — mobile only (desktop version lives inside the title cell) */}
+                    <Image
+                      src={bill.avatar}
+                      alt={bill.name}
+                      width={40}
+                      height={40}
+                      className="rounded-full shrink-0 sm:hidden"
+                    />
+
+                    {/* Title cell */}
+                    <div className="min-w-0">
+                      {/* Desktop: avatar + name inline */}
+                      <div className="hidden sm:flex items-center gap-4 min-w-0">
+                        <Image src={bill.avatar} alt={bill.name} width={40} height={40} className="rounded-full shrink-0" />
+                        <span className="text-[14px] font-bold text-grey-900 truncate">{bill.name}</span>
+                      </div>
+                      {/* Mobile: name then date below */}
+                      <span className="sm:hidden text-[14px] font-bold text-grey-900 truncate block">{bill.name}</span>
+                      <div className="sm:hidden flex items-center gap-2 mt-1 whitespace-nowrap">
+                        <span className={`text-[12px] font-medium ${status === "upcoming" ? "text-grey-500" : "text-green"}`}>
+                          Monthly · {formatOrdinal(bill.day)}
+                        </span>
+                        {status === "paid" && (
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <circle cx="8" cy="8" r="8" fill="#277C78" />
+                            <path d="M4.5 8l2.5 2.5 4.5-4.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                        )}
+                        {status === "dueSoon" && (
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <circle cx="8" cy="8" r="8" fill="#C94F4F" />
+                            <path d="M8 5v3.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+                            <circle cx="8" cy="11" r="0.75" fill="white" />
+                          </svg>
+                        )}
+                      </div>
                     </div>
 
-                    {/* Due Date */}
-                    <div className="flex items-center gap-2 whitespace-nowrap">
+                    {/* Due Date — desktop only */}
+                    <div className="hidden sm:flex items-center gap-2 whitespace-nowrap">
                       <span className={`text-[12px] font-medium ${status === "upcoming" ? "text-grey-500" : "text-green"}`}>
-                        Monthly · {ordinal(bill.day)}
+                        Monthly · {formatOrdinal(bill.day)}
                       </span>
                       {status === "paid" && (
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -214,7 +234,7 @@ export default function RecurringBillsClient({ bills }: { bills: RecurringBill[]
 
                     {/* Amount */}
                     <span className={`text-[14px] font-bold text-right ${status === "dueSoon" ? "text-red" : "text-grey-900"}`}>
-                      {formatCurrency(bill.amount)}
+                      {formatCurrencyNoSign(bill.amount)}
                     </span>
                   </li>
                 )

@@ -1,33 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Personal Finance App
+
+A full-stack personal finance tracker built with Next.js 16, React 19, and Supabase. Track your balance, manage budgets, monitor savings pots, browse transactions, and stay on top of recurring bills — all in one place.
+
+## Features
+
+- **Overview** — snapshot of your current balance, income, expenses, recent transactions, budget spend, pot savings, and recurring bill summary
+- **Transactions** — full transaction history with search, category filter, and sort controls
+- **Budgets** — create, edit, and delete spending budgets per category; see real spend vs limit
+- **Pots** — savings pots with add/withdraw money flows and color-coded themes
+- **Recurring Bills** — deduplicated view of monthly recurring transactions with paid/due-soon/upcoming status
+
+## Tech Stack
+
+| Layer | Choice |
+|---|---|
+| Framework | Next.js 16 (App Router, Turbopack) |
+| UI | React 19, Tailwind CSS v4 |
+| Auth & Database | Supabase (SSR client) |
+| Charts | Recharts |
+| Font | Public Sans (variable, self-hosted) |
+| Language | TypeScript |
+
+## Project Structure
+
+```
+app/
+├── (auth)/           # Login and sign-up pages (no sidebar)
+├── actions/          # Server actions (budgets, pots)
+├── api/              # Route handlers
+├── budgets/          # Budgets page
+├── components/       # Shared UI components
+│   ├── auth/         # Auth forms, logout modal
+│   ├── budgets/      # Budget cards, modals
+│   ├── overviews/    # Overview section widgets
+│   ├── pots/         # Pot cards, modals
+│   ├── recurring-bills/
+│   └── transactions/
+├── overview/         # Overview page
+├── pots/             # Pots page
+├── recurring-bills/  # Recurring bills page
+├── transactions/     # Transactions page
+├── error.tsx         # Route-level error boundary
+├── global-error.tsx  # Root layout error boundary
+├── global-not-found.tsx  # Full-page 404 (no sidebar)
+└── layout.tsx        # Root layout
+proxy.ts              # Auth middleware (Next.js 16)
+utils/supabase/       # Supabase server/client helpers
+```
 
 ## Getting Started
 
-First, run the development server:
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Set up environment variables
+
+Create a `.env.local` file at the project root:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_anon_key
+```
+
+Both values are available in your Supabase project under **Settings → API**.
+
+### 3. Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). Unauthenticated users are redirected to `/login` automatically.
 
+## Database
 
-## Learn More
+The app expects the following tables in Supabase (with `user_id` RLS policies):
 
-To learn more about Next.js, take a look at the following resources:
+| Table | Key columns |
+|---|---|
+| `balances` | `user_id`, `current`, `income`, `expenses`, `recurring_paid`, `recurring_upcoming`, `recurring_due_soon` |
+| `transactions` | `user_id`, `name`, `avatar`, `category`, `amount`, `date`, `recurring` |
+| `budgets` | `user_id`, `category`, `maximum`, `theme` |
+| `pots` | `user_id`, `name`, `target`, `total`, `theme` |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm run dev      # Start dev server (Turbopack)
+npm run build    # Production build
+npm run start    # Start production server
+npm run lint     # Run ESLint
+```
 
-## Deploy on Vercel
+## Auth Flow
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Route protection is handled by `proxy.ts` (Next.js 16 middleware). Public paths are `/login` and `/sign-up` — all other routes require an authenticated Supabase session. Logged-in users visiting public paths are redirected to `/overview`.

@@ -1,5 +1,5 @@
 import { Balance } from "@/app/data/types";
-import { formatCurrency } from "@/lib/formatCurrencyNoSign";
+import { formatCurrencyNoSign as formatCurrency } from "@/lib/formatter";
 
 
 interface BalanceCardsProps {

@@ -4,7 +4,7 @@ import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import type { Budget, BudgetWithTransactions } from "@/app/data/types"
-import { formatCurrency as formatCurrencyNoSign } from "@/lib/formatCurrencyNoSign"
+import { formatCurrencyNoSign } from "@/lib/formatter"
 import { formatCurrency, formatDate } from "@/lib/formatter"
 
 interface BudgetCardProps {

@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import type { Pot } from "@/app/data/types"
-import { formatCurrency } from "@/lib/formatCurrencyNoSign"
+import { formatCurrencyNoSign as formatCurrency } from "@/lib/formatter"
 
 interface PotCardProps {
   pot: Pot
