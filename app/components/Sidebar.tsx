@@ -3,7 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import LogoutModal from "@/app/components/auth/LogoutModal";
 
 interface NavItem {
   label: string;
@@ -35,6 +37,8 @@ const navItems: NavItem[] = [
 const Sidebar = ({ minimized, setMinimized }: SidebarProps) => {
   const pathname = usePathname();
   const router = useRouter();
+
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -118,7 +122,7 @@ const Sidebar = ({ minimized, setMinimized }: SidebarProps) => {
 
         {/* Logout Button */}
         <button
-          onClick={handleLogout}
+          onClick={() => setShowLogoutModal(true)}
           className="flex items-center gap-4 px-8 py-4 text-grey-300 hover:text-white transition-colors duration-200 cursor-pointer"
         >
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
@@ -190,7 +194,7 @@ const Sidebar = ({ minimized, setMinimized }: SidebarProps) => {
           })}
           <li>
             <button
-              onClick={handleLogout}
+              onClick={() => setShowLogoutModal(true)}
               className="flex flex-col items-center gap-1 px-3 py-2 text-grey-300 transition-colors duration-200 cursor-pointer"
             >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -203,6 +207,12 @@ const Sidebar = ({ minimized, setMinimized }: SidebarProps) => {
           </li>
         </ul>
       </nav>
+      {showLogoutModal && (
+        <LogoutModal
+          onConfirm={handleLogout}
+          onClose={() => setShowLogoutModal(false)}
+        />
+      )}
     </>
   );
 }

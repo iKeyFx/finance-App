@@ -24,23 +24,27 @@ export default async function OverviewPage() {
     { data: potsData },
     { data: transactionsData },
     { data: budgetsData },
-    { data: allNegativeTx },
+    { data: allTx },
   ] = await Promise.all([
-    supabase.from("balances").select("current, income, expenses, recurring_paid, recurring_upcoming, recurring_due_soon").eq("user_id", user.id).single(),
+    supabase.from("balances").select("recurring_paid, recurring_upcoming, recurring_due_soon").eq("user_id", user.id).single(),
     supabase.from("pots").select("name, target, total, theme").eq("user_id", user.id),
     supabase.from("transactions").select("avatar, name, category, date, amount, recurring").eq("user_id", user.id).order("date", { ascending: false }).limit(5),
     supabase.from("budgets").select("category, maximum, theme").eq("user_id", user.id),
-    supabase.from("transactions").select("category, amount").eq("user_id", user.id).lt("amount", 0),
+    supabase.from("transactions").select("amount, category").eq("user_id", user.id),
   ])
 
-  const balance: Balance = balanceData ?? { current: 0, income: 0, expenses: 0 }
+  const txList = allTx ?? []
+  const income = txList.filter(tx => tx.amount > 0).reduce((sum, tx) => sum + tx.amount, 0)
+  const expenses = txList.filter(tx => tx.amount < 0).reduce((sum, tx) => sum + Math.abs(tx.amount), 0)
+  const balance: Balance = { current: income - expenses, income, expenses }
+
   const pots: Pot[] = potsData ?? []
   const transactions: Transaction[] = (transactionsData ?? []).map((tx) => ({ ...tx, recurring: tx.recurring ?? false }))
 
   const budgets: Budget[] = (budgetsData ?? []).map((b) => ({
     ...b,
-    spent: (allNegativeTx ?? [])
-      .filter((tx) => tx.category === b.category)
+    spent: txList
+      .filter((tx) => tx.category === b.category && tx.amount < 0)
       .reduce((sum, tx) => sum + Math.abs(tx.amount), 0),
   }))
 
