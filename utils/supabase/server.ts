@@ -17,7 +17,7 @@ export const createClient = async () => {
               cookieStore.set(name, value, options)
             )
           } catch {
-            // Server Component — safe to ignore if proxy refreshes sessions
+            // Server Component 
           }
         },
       },

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import LogoutModal from "@/app/components/auth/LogoutModal";
 
@@ -37,6 +38,8 @@ const navItems: NavItem[] = [
 const Sidebar = ({ minimized, setMinimized }: SidebarProps) => {
   const pathname = usePathname();
   const router = useRouter();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const handleLogout = async () => {
@@ -206,7 +209,6 @@ const Sidebar = ({ minimized, setMinimized }: SidebarProps) => {
           </li>
         </ul>
       </nav>
-
       {showLogoutModal && (
         <LogoutModal
           onConfirm={handleLogout}
