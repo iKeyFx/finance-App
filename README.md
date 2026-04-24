@@ -2,6 +2,13 @@
 
 A full-stack personal finance tracker built with Next.js 16, React 19, and Supabase. Track your balance, manage budgets, monitor savings pots, browse transactions, and stay on top of recurring bills — all in one place.
 
+## Test Account
+
+| Field    | Value                |
+|----------|----------------------|
+| Email    | testDsam12@gmail.com |
+| Password | 12345678             |
+
 ## Features
 
 - **Overview** — snapshot of your current balance, income, expenses, recent transactions, budget spend, pot savings, and recurring bill summary
