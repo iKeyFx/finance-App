@@ -1,6 +1,6 @@
 "use server"
 
-import { createClient } from "@/utils/supabase/server"
+import { requireUserForAction } from "@/utils/supabase/helpers"
 import type { Pot } from "@/app/data/types"
 
 function validatePot(pot: Pot) {
@@ -21,9 +21,7 @@ function validateAmount(amount: number) {
 
 export async function addPot(pot: Pot) {
   validatePot(pot)
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error("Not authenticated")
+  const { user, supabase } = await requireUserForAction()
 
   const { error } = await supabase.from("pots").insert({
     user_id: user.id,
@@ -38,9 +36,7 @@ export async function addPot(pot: Pot) {
 export async function updatePot(originalName: string, pot: Pot) {
   if (!originalName || typeof originalName !== "string") throw new Error("Invalid pot name")
   validatePot(pot)
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error("Not authenticated")
+  const { user, supabase } = await requireUserForAction()
 
   const { error } = await supabase
     .from("pots")
@@ -52,9 +48,7 @@ export async function updatePot(originalName: string, pot: Pot) {
 
 export async function deletePot(name: string) {
   if (!name || typeof name !== "string") throw new Error("Invalid pot name")
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error("Not authenticated")
+  const { user, supabase } = await requireUserForAction()
 
   const { error } = await supabase
     .from("pots")
@@ -67,9 +61,7 @@ export async function deletePot(name: string) {
 export async function addMoneyToPot(name: string, amount: number) {
   if (!name || typeof name !== "string") throw new Error("Invalid pot name")
   validateAmount(amount)
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error("Not authenticated")
+  const { user, supabase } = await requireUserForAction()
 
   const { data: pot, error: fetchError } = await supabase
     .from("pots")
@@ -90,9 +82,7 @@ export async function addMoneyToPot(name: string, amount: number) {
 export async function withdrawFromPot(name: string, amount: number) {
   if (!name || typeof name !== "string") throw new Error("Invalid pot name")
   validateAmount(amount)
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) throw new Error("Not authenticated")
+  const { user, supabase } = await requireUserForAction()
 
   const { data: pot, error: fetchError } = await supabase
     .from("pots")

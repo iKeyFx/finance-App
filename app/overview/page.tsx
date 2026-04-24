@@ -1,11 +1,10 @@
 import type { Metadata } from "next"
-import { redirect } from "next/navigation"
 import BalanceCards from "@/app/components/overviews/BalanceCards"
 import PotsOverview from "@/app/components/overviews/PotsOverview"
 import TransactionsOverview from "@/app/components/overviews/TransactionsOverview"
 import BudgetsOverview from "@/app/components/overviews/BudgetsOverview"
 import RecurringBillsOverview from "@/app/components/overviews/RecurringBillsOverview"
-import { createClient } from "@/utils/supabase/server"
+import { requireUser } from "@/utils/supabase/helpers"
 import type { Balance, Pot, Transaction, Budget, RecurringBillsSummary } from "@/app/data/types"
 
 export const metadata: Metadata = {
@@ -18,9 +17,7 @@ export const metadata: Metadata = {
 }
 
 export default async function OverviewPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect("/login")
+  const { user, supabase } = await requireUser()
 
   const [
     { data: balanceData },

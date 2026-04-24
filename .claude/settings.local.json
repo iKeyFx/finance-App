@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sed -i 's|import { formatCurrency } from \"@/lib/formatCurrencyNoSign\";|import { formatCurrencyNoSign as formatCurrency } from \"@/lib/formatter\";|g' c:/Users/iKeyFx/Desktop/Project/personal-finance-app/app/components/overviews/BalanceCards.tsx c:/Users/iKeyFx/Desktop/Project/personal-finance-app/app/components/overviews/PotsOverview.tsx c:/Users/iKeyFx/Desktop/Project/personal-finance-app/app/components/overviews/RecurringBillsOverview.tsx)",
+      "Bash(sed -i 's|import { formatCurrency } from \"@/lib/formatCurrencyNoSign\"|import { formatCurrencyNoSign as formatCurrency } from \"@/lib/formatter\"|g' c:/Users/iKeyFx/Desktop/Project/personal-finance-app/app/components/overviews/BudgetsOverview.tsx c:/Users/iKeyFx/Desktop/Project/personal-finance-app/app/components/budgets/BudgetDonutChart.tsx c:/Users/iKeyFx/Desktop/Project/personal-finance-app/app/components/pots/PotCard.tsx)"
+    ]
+  }
+}

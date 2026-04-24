@@ -1,6 +1,5 @@
 import type { Metadata } from "next"
-import { redirect } from "next/navigation"
-import { createClient } from "@/utils/supabase/server"
+import { requireUser } from "@/utils/supabase/helpers"
 import RecurringBillsClient from "@/app/components/recurring-bills/RecurringBillsClient"
 
 export const metadata: Metadata = {
@@ -20,10 +19,7 @@ export interface RecurringBill {
 }
 
 export default async function RecurringBillsPage() {
-  const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
-  if (authError) throw new Error(authError.message)
-  if (!user) redirect("/login")
+  const { user, supabase } = await requireUser()
 
   const { data, error } = await supabase
     .from("transactions")

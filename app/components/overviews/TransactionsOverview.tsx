@@ -1,26 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { TransactionData } from "@/app/data/types";
+import { formatCurrency, formatDate } from "@/lib/formatter";
 
 interface TransactionsOverviewProps {
   transactions: TransactionData[];
-}
-
-function formatCurrency(amount: number): string {
-  const formatted = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(Math.abs(amount));
-  return amount >= 0 ? `+${formatted}` : `-${formatted}`;
-}
-
-function formatDate(dateStr: string): string {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString("en-US", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
 }
 
 const TransactionsOverview = ({

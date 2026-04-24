@@ -7,7 +7,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart"
-import { formatCurrency } from "@/lib/formatCurrencyNoSign"
+import { formatCurrencyNoSign as formatCurrency } from "@/lib/formatter"
 import type { Budget } from "@/app/data/types"
 
 interface BudgetDonutChartProps {

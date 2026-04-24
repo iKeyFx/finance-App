@@ -1,7 +1,7 @@
 import { Pot } from "@/app/data/types";
 import Image from "next/image";
 import Link from "next/link";
-import { formatCurrency } from "@/lib/formatCurrencyNoSign";
+import { formatCurrencyNoSign as formatCurrency } from "@/lib/formatter";
 
 interface PotsOverviewProps {
   pots: Pot[];
